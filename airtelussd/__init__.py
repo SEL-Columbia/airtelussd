@@ -7,13 +7,13 @@ from pyramid.response import Response
 from airtelussd import templates
 
 
-def request_requires(request, keys=[]):
-    for key in keys:
-        if key not in request.POST:
-            raise HTTPClientError('Missing tag %s from request' % key)
-
-
-options = [{'menu': 1, 'title': 'Check your blance'}]
+options = (('A', 'Add power time'),
+           ('B', 'Check Balance'),
+           ('C', 'Turn Circuit On'),
+           ('D', 'Turn Circuit Off'),
+           ('E', 'Check 30 Day Status'),
+           ('F', 'Change contact number'),
+           ('G', 'Meter mission'), )
 
 
 def error(user_input):
@@ -21,20 +21,42 @@ def error(user_input):
 
 
 def index_menu(request, session_id, user_input):
+    """
+    Function to render the main SharedSolar USSD index.
+    """
     return Response(templates.index.render(menu=options))
+
+
+def check_balance(request, session_id, user_input):
+    """
+    Allows user to check their balance.
+    """
 
 
 @view_config(route_name='index')
 def index(request):
+    """
+    Main view function that displays all of the USSD options This view
+    function checks to make sure that Airtel gives us the correct
+    request keys, or tags (The term used by the Airtel Tech).
+    """
     if request.method == 'POST':
-        request_requires(request, keys=['SESSIONID', 'REQUESTNEW', 'INPUT'])
         session_id = request.POST.get('SESSIONID')
-        request_new_p = request.POST.get('REQUESTNEW')
-        user_input = request.POST.get('INPUT')
+        # check that we have the required keys
+        if session_id is None:
+            raise HTTPClientError('Missing session id')
+        request_new_p = request.POST.get('REQUESTNEW')  # this is a guess
+        if request_new_p is None:
+            raise HTTPClientError('Missing new requrest tag')
+        user_input = request.POST.get('INPUT')  # this is also a guess
+        if user_input is None:
+            raise HTTPClientError('Missing user input tag')
+
+        # show the index menu if this is a new request
         if request_new_p == True:
             return index_menu(request, session_id, user_input)
-        if user_input == '1':
-            return index_menu(request, session_id, user_input)
+        if request_new_p == False and user_input == 1:
+            check_balance()
         return error(user_input)
     else:
         return HTTPMethodNotAllowed()
