@@ -40,5 +40,4 @@ class ViewTest(unittest.TestCase):
                   'INPUT': '',
                   'SESSIONID': '123455'})
         resp = index(request)
-        import pdb; pdb.set_trace()
         self.assertTrue(isinstance(resp, Response))
