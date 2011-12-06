@@ -24,7 +24,7 @@ def index_menu(request, session_id, user_input):
     """
     Function to render the main SharedSolar USSD index.
     """
-    return Response(templates.index.render(menu=options))
+    return Response(templates.index.render(menu=options), headerslist=[''])
 
 
 def check_balance(request, session_id, user_input):
@@ -55,7 +55,7 @@ def index(request):
         # show the index menu if this is a new request
         if request_new_p == True:
             return index_menu(request, session_id, user_input)
-        if request_new_p == False and user_input == 1:
+        if request_new_p == False and user_input == 'A':
             check_balance()
         return error(user_input)
     else:
