@@ -45,7 +45,8 @@ def index(request):
         # check that we have the required keys
         if session_id is None:
             raise HTTPClientError('Missing session id')
-        request_new_p = request.POST.get('REQUESTNEW')  # this is a guess
+        request_new_p = request.POST.get('TYPE')  # if the a new request
+        # values = 1 == new request, 0 not new request
         if request_new_p is None:
             raise HTTPClientError('Missing new requrest tag')
         user_input = request.POST.get('INPUT')  # this is also a guess
