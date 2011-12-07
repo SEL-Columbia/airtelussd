@@ -50,9 +50,6 @@ def index(request):
         if request_new_p is None:
             raise HTTPClientError('Missing new requrest tag')
         user_input = request.POST.get('INPUT')  # this is also a guess
-        if user_input is None:
-            raise HTTPClientError('Missing user input tag')
-
         return Response(user_input)
     else:
         return HTTPMethodNotAllowed()
